@@ -2,12 +2,12 @@ package visualization
 
 import (
 	"fmt"
+	"image/color"
 
 	"github.com/MyVueCodeHub/myvue-bayes/distributions"
 	"gonum.org/v1/plot"
 	"gonum.org/v1/plot/plotter"
 	"gonum.org/v1/plot/vg"
-	"gonum.org/v1/plot/vg/draw"
 )
 
 // PlotType represents the type of plot
@@ -36,10 +36,8 @@ type BayesianPlotter struct {
 
 // NewBayesianPlotter creates a new plotter
 func NewBayesianPlotter(title string) (*BayesianPlotter, error) {
-	p, err := plot.New()
-	if err != nil {
-		return nil, err
-	}
+	p := plot.New()
+
 	p.Title.Text = title
 	return &BayesianPlotter{plot: p}, nil
 }
@@ -70,7 +68,7 @@ func (bp *BayesianPlotter) PriorPosteriorPlot(
 	for i := range x {
 		priorLine.XYs = append(priorLine.XYs, plotter.XY{X: x[i], Y: priorY[i]})
 	}
-	priorLine.Color = draw.ColorBlue
+	priorLine.Color = color.RGBA{0, 0, 255, 50}
 	priorLine.Width = vg.Points(2)
 
 	// Posterior line
@@ -81,7 +79,7 @@ func (bp *BayesianPlotter) PriorPosteriorPlot(
 	for i := range x {
 		postLine.XYs = append(postLine.XYs, plotter.XY{X: x[i], Y: postY[i]})
 	}
-	postLine.Color = draw.ColorRed
+	postLine.Color = color.RGBA{255, 0, 0, 50} //red
 	postLine.Width = vg.Points(2)
 
 	bp.plot.Add(priorLine, postLine)
@@ -121,7 +119,7 @@ func (bp *BayesianPlotter) CredibleIntervalPlot(
 	if err != nil {
 		return err
 	}
-	lowerLine.LineStyle.Color = draw.ColorRed
+	lowerLine.LineStyle.Color = color.RGBA{255, 0, 0, 50} //red
 	lowerLine.LineStyle.Width = vg.Points(2)
 	lowerLine.LineStyle.Dashes = []vg.Length{vg.Points(5), vg.Points(5)}
 
@@ -173,10 +171,7 @@ func PlotABTestResults(
 	controlSamples, treatmentSamples []float64,
 	filename string,
 ) error {
-	p, err := plot.New()
-	if err != nil {
-		return err
-	}
+	p := plot.New()
 
 	p.Title.Text = "A/B Test Posterior Distributions"
 
@@ -185,16 +180,16 @@ func PlotABTestResults(
 	if err != nil {
 		return err
 	}
-	controlHist.FillColor = draw.ColorBlue
-	controlHist.Color = draw.ColorBlue
+	controlHist.FillColor = color.RGBA{0, 0, 255, 50} //blue
+	controlHist.Color = color.RGBA{255, 0, 0, 50}     //red
 	controlHist.Normalize(1)
 
 	treatmentHist, err := plotter.NewHist(plotter.Values(treatmentSamples), 50)
 	if err != nil {
 		return err
 	}
-	treatmentHist.FillColor = draw.ColorRed
-	treatmentHist.Color = draw.ColorRed
+	treatmentHist.FillColor = color.RGBA{255, 0, 0, 50} //red
+	treatmentHist.Color = color.RGBA{255, 0, 0, 50}     //red
 	treatmentHist.Normalize(1)
 
 	p.Add(controlHist, treatmentHist)

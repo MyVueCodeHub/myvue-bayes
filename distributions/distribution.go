@@ -1,9 +1,8 @@
 package distributions
 
 import (
-	"math"
+	"slices"
 
-	"gonum.org/v1/gonum/floats"
 	"gonum.org/v1/gonum/stat"
 )
 
@@ -103,7 +102,8 @@ type Summary struct {
 func ComputeSummary(samples []float64) Summary {
 	sort := make([]float64, len(samples))
 	copy(sort, samples)
-	floats.Sort(sort)
+
+	slices.Sort(sort)
 
 	return Summary{
 		Mean:     stat.Mean(samples, nil),
@@ -125,7 +125,7 @@ func ComputeSummary(samples []float64) Summary {
 
 func estimateMode(samples []float64) float64 {
 	// Simple kernel density estimation for mode
-	bandwidth := 1.06 * stat.StdDev(samples, nil) * math.Pow(float64(len(samples)), -0.2)
+	//bandwidth := 1.06 * stat.StdDev(samples, nil) * math.Pow(float64(len(samples)), -0.2)
 	// Simplified implementation - in production use more sophisticated KDE
 	return stat.Mean(samples, nil) // Placeholder
 }
